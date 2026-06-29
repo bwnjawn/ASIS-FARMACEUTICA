@@ -72,36 +72,37 @@ asis-farmaceutica/
 ## ⚙️ Instrucciones de Instalación (Windows)
 
 **1. Clonar el repositorio y entrar a la carpeta del backend**
-\`\`\`bash
+
+```bash
 git clone <url-de-tu-repo>
 cd ASIS-FARMACEUTICA/backend
-\`\`\`
+```
 
 **2. Crear y activar el entorno virtual limpio**
 Es estrictamente necesario crear el entorno forzando la versión estable de Python para evitar conflictos asíncronos con Playwright en Windows:
-\`\`\`bash
+```bash
 py -3.13 -m venv venv
 venv\Scripts\activate
-\`\`\`
+```
 
 **3. Instalar las dependencias**
-\`\`\`bash
+```bash
 pip install -r requirements.txt
-\`\`\`
+```
 
 **4. Instalar los navegadores ocultos (Playwright)**
 Este comando es obligatorio para que el bot extractor del Token de YAPP funcione:
-\`\`\`bash
+```bash
 playwright install chromium
-\`\`\`
+```
 
 **5. Configurar Variables de Entorno**
 Crea un archivo llamado `.env` en la raíz de la carpeta `/backend` y añade tus credenciales:
-\`\`\`text
+```text
 SUPABASE_URL="tu_url_de_supabase"
 SUPABASE_KEY="tu_api_key_anon_de_supabase"
 ENVIRONMENT="development"
-\`\`\`
+```
 *(Nota: Mantén `ENVIRONMENT="development"` mientras programas para usar el autómata de recarga. Cámbialo a `"production"` para ejecutar el bot de YAPP completo).*
 
 ## 🏃‍♂️ Levantar el Servidor
