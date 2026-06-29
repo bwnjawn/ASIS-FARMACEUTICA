@@ -63,7 +63,7 @@ asis-farmaceutica/
 ## Puesta en Marcha
 
 
-## **Backend:**
+# Instalación y Configuración **Backend:**
 
 ## 🚀 Requisitos Previos
 * **Python 3.12 o 3.13** instalado en tu sistema.
@@ -114,13 +114,57 @@ uvicorn app.main:app --reload
 
 La API interactiva (Swagger UI) estará disponible en: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-**Frontend:**
+
+# Instalación y Configuración (Frontend - Quasar PWA)
+
+El cliente de **ASIS Farmacéutica** está construido utilizando **Quasar Framework (Vue 3 + Vite)**, optimizado para funcionar como una **Aplicación Web Progresiva (PWA)** de alta accesibilidad.
+
+## Requisitos Previos
+
+- **Node.js** (versión LTS recomendada, 18 o superior).
+- **pnpm** instalado globalmente.
+
+Si no tienes `pnpm`, instálalo ejecutando:
+
 ```bash
-cd frontend
-python -m http.server 3000
-# o: npx serve .
+npm install -g pnpm
 ```
 
+## Configuración del Entorno
+
+### 1. Entrar a la carpeta del frontend e instalar dependencias
+
+```bash
+cd frontend
+pnpm install
+```
+
+### 2. Configurar el módulo de entorno local
+
+Para evitar conflictos con las variables de entorno de Vite en Windows y proteger las credenciales públicas de Supabase, el proyecto utiliza un archivo JavaScript local que no se sincroniza con el repositorio.
+
+Crea un archivo llamado `env.js` dentro de `frontend/src/` y agrega las credenciales del proyecto:
+
+```javascript
+// frontend/src/env.js
+
+export const ENV = {
+  SUPABASE_URL: 'https://tu-proyecto.supabase.co',
+  SUPABASE_ANON_KEY: 'tu-llave-anon-publica-aqui'
+};
+```
+
+> **Nota:** El archivo `.gitignore` del proyecto ya está configurado para ignorar automáticamente `src/env.js`, por lo que tus credenciales locales no se subirán al repositorio.
+
+## Ejecución en Desarrollo
+
+Para iniciar el servidor de desarrollo con recarga automática (Hot Module Replacement):
+
+```bash
+pnpm dev
+```
+
+Una vez iniciado, la aplicación estará disponible en la URL mostrada por la consola (normalmente `http://localhost:9000` o similar).
 ---
 
 ## Configuración del Token YAPP
