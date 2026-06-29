@@ -62,24 +62,56 @@ asis-farmaceutica/
 
 ## Puesta en Marcha
 
-### Opción 1: Docker Compose (recomendado)
 
-```bash
-docker-compose up --build
-```
+## **Backend:**
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- Documentación API: http://localhost:8000/docs
+## 🚀 Requisitos Previos
+* **Python 3.12 o 3.13** instalado en tu sistema.
+* Cuenta en [Supabase](https://supabase.com/) con el proyecto inicializado y las tablas creadas.
 
-### Opción 2: Local sin Docker
+## ⚙️ Instrucciones de Instalación (Windows)
 
-**Backend:**
-```bash
-cd backend
+**1. Clonar el repositorio y entrar a la carpeta del backend**
+\`\`\`bash
+git clone <url-de-tu-repo>
+cd ASIS-FARMACEUTICA/backend
+\`\`\`
+
+**2. Crear y activar el entorno virtual limpio**
+Es estrictamente necesario crear el entorno forzando la versión estable de Python para evitar conflictos asíncronos con Playwright en Windows:
+\`\`\`bash
+py -3.13 -m venv venv
+venv\Scripts\activate
+\`\`\`
+
+**3. Instalar las dependencias**
+\`\`\`bash
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-```
+\`\`\`
+
+**4. Instalar los navegadores ocultos (Playwright)**
+Este comando es obligatorio para que el bot extractor del Token de YAPP funcione:
+\`\`\`bash
+playwright install chromium
+\`\`\`
+
+**5. Configurar Variables de Entorno**
+Crea un archivo llamado `.env` en la raíz de la carpeta `/backend` y añade tus credenciales:
+\`\`\`text
+SUPABASE_URL="tu_url_de_supabase"
+SUPABASE_KEY="tu_api_key_anon_de_supabase"
+ENVIRONMENT="development"
+\`\`\`
+*(Nota: Mantén `ENVIRONMENT="development"` mientras programas para usar el autómata de recarga. Cámbialo a `"production"` para ejecutar el bot de YAPP completo).*
+
+## 🏃‍♂️ Levantar el Servidor
+
+Para iniciar el servidor en modo desarrollo (recarga automática al guardar archivos):
+\`\`\`bash
+uvicorn app.main:app --reload
+\`\`\`
+
+La API interactiva (Swagger UI) estará disponible en: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 **Frontend:**
 ```bash

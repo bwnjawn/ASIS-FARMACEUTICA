@@ -75,15 +75,15 @@ pip install fastapi uvicorn supabase playwright apscheduler python-dotenv
 playwright install chromium
 ```
 
-* [ ] Crear archivo `requirements.txt`.
+* [x] Crear archivo `requirements.txt`.
 
 ## Configuración de Supabase
 
 * [x] Crear un nuevo proyecto en Supabase.
 * [x] Obtener URL y API Key.
 * [x] Crear archivo `.env` en backend.
-* [ ] Crear archivo `.env` en frontend.
-* [ ] Guardar credenciales en ambos entornos.
+* [x] Crear archivo `.env` en frontend.
+* [x] Guardar credenciales en ambos entornos.
 
 ---
 
@@ -93,36 +93,38 @@ playwright install chromium
 
 ## Modelado de Tablas en Supabase
 
-* [ ] Crear tabla **Perfiles**.
-* [ ] Crear tabla **Cuidadores**.
-* [ ] Crear tabla **Vinculos**.
-* [ ] Crear tabla **Recordatorios**.
-* [ ] Crear tabla **Historial_Tomas**.
+* [x] Crear tabla **paciente**.
+* [x] Crear tabla **cuidador**.
+* [x] Crear tabla **paciente_cuidador**.
+* [x] Crear tabla **Recordatorio**.
+* [x] Crear tabla **Historial_Toma**.
 
 ## Sistema de Login (RUT + Contraseña)
 
 ### Estrategia Técnica
 
-* [ ] Implementar conversión automática:
+* [x] Implementar conversión automática:
 
 ```text
 12345678-9 → 12345678-9@asis.cl
 ```
 
-* [ ] Enviar correo generado y contraseña a Supabase Auth.
+* [x] Enviar correo generado y contraseña a Supabase Auth.
 
 ### Registro
 
-* [ ] Crear formulario de registro.
-* [ ] Solicitar Nombre Completo.
-* [ ] Solicitar RUT.
-* [ ] Solicitar Contraseña.
+* [x] Crear formulario de registro.
+* [x] Solicitar Nombre Completo.
+* [x] Solicitar RUT.
+* [x] Solicitar Contraseña.
 
 ### Inicio de Sesión
 
-* [ ] Crear formulario de login.
-* [ ] Solicitar RUT.
-* [ ] Solicitar Contraseña.
+* [x] Crear formulario de login.
+* [x] Solicitar RUT.
+* [x] Solicitar Contraseña.
+* [ ] falta confirmacion de que el rut sea real chileno.
+* [ ] quiza mas adelante poner correo real de confirmacion
 
 ---
 
