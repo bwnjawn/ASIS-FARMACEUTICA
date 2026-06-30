@@ -137,16 +137,30 @@ export default defineConfig((/* ctx */) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
-      // swFilename: 'sw.js',
-      // manifestFilename: 'manifest.json',
-      // extendPWAManifestJson (json) {},
-      // useCredentialsForManifestTag: true,
-      // injectPWAMetaTags: false,
-      // extendPWACustomSWConf (rolldownConf) {},
-      // extendPWAGenerateSWOptions (cfg) {},
-      // extendPWAInjectManifestOptions (cfg) {},
-      // extendPWASwTsConfig (tsConfig) {}
+      workboxMode: 'generateSW', // Estrategia para manejar archivos offline
+      injectPwaMetaTags: true,
+      title: 'ASIS Farmacéutica',
+      manifest: {
+        name: 'ASIS Farmacéutica',
+        short_name: 'ASIS',
+        description: 'Asistencia farmacéutica para adultos mayores',
+        display: 'standalone',
+        orientation: 'portrait',
+        background_color: '#ffffff',
+        theme_color: '#1976D2', // Color primario de tu App
+        icons: [
+          {
+            src: 'icons/favicon-128x128.png',
+            sizes: '128x128',
+            type: 'image/png'
+          },
+          {
+            src: 'icons/favicon-96x96.png',
+            sizes: '96x96',
+            type: 'image/png'
+          }
+        ]
+      }
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova

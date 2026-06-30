@@ -2,43 +2,39 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useAlarmasStore = defineStore('alarmas', () => {
-  // Lista de remedios guardada en el disco
-  const listaAlarmas = ref([])
-  
-  // Objeto que guarda { id_alarma: "2026-06-30" }
-  const registroTomas = ref({})
+  // RNF04: Inicializar desde el disco (localStorage) para que funcione sin internet
+  const listaAlarmas = ref(JSON.parse(localStorage.getItem('lista_alarmas_offline')) || [])
+  const registroTomas = ref(JSON.parse(localStorage.getItem('registro_tomas_offline')) || {})
 
-  // Obtener la fecha actual en formato YYYY-MM-DD
   const obtenerFechaHoy = () => {
     const hoy = new Date()
-    // Ajuste seguro para la zona horaria local (América/Santiago)
-    return hoy.toLocaleDateString('en-CA') // Devuelve formato YYYY-MM-DD
+    return hoy.toLocaleDateString('en-CA') 
   }
 
   // 1. Marcar un remedio como tomado HOY
   const marcarComoTomado = async (alarma) => {
     const hoy = obtenerFechaHoy()
     
-    // Forzamos la reactividad de Vue clonando el objeto con el ID real de tu BD
     registroTomas.value = { 
       ...registroTomas.value, 
       [alarma.id_recordatorio]: hoy 
     }
     
+    // RNF04: Guardamos inmediatamente en el celular por si se corta el internet
+    localStorage.setItem('registro_tomas_offline', JSON.stringify(registroTomas.value))
+    
     try {
-    await fetch(`http://127.0.0.1:8000/api/alarmas/${alarma.id_recordatorio}/tomar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-        estado: 'Tomado',
-        // Generamos el timestamp exacto que pide tu base de datos
-        fecha_hora_real: new Date().toISOString() 
-        })
-    })
-    console.log("Historial guardado exitosamente en la base de datos")
+      await fetch(`http://127.0.0.1:8000/api/alarmas/${alarma.id_recordatorio}/tomar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+          estado: 'Tomado',
+          fecha_hora_real: new Date().toISOString() 
+          })
+      })
+      console.log("Historial guardado exitosamente en la base de datos")
     } catch (error) {
-    // RNF04: Si no hay internet, Pinia ya lo guardó en el celular
-    console.error("Modo Offline: El registro se sincronizará luego.", error)
+      console.warn("Modo Offline: El registro se guardó localmente. Se sincronizará luego.", error)
     }
   }
 
@@ -46,15 +42,52 @@ export const useAlarmasStore = defineStore('alarmas', () => {
   const yaSeTomoHoy = (id_recordatorio) => {
     return registroTomas.value[id_recordatorio] === obtenerFechaHoy()
   }
+
   // 3. Obtener alarmas de FastAPI
   const cargarAlarmasBackend = async (idPaciente, rutaGET) => {
+    // Si no hay internet, no hacemos el fetch, confiamos en lo que cargó localStorage arriba
+    if (!navigator.onLine) {
+      console.log("Sin conexión: Mostrando alarmas desde memoria local.")
+      return
+    }
+
     try {
       const respuesta = await fetch(rutaGET)
       if (respuesta.ok) {
         listaAlarmas.value = await respuesta.json()
+        // RNF04: Actualizamos la copia de seguridad en el celular
+        localStorage.setItem('lista_alarmas_offline', JSON.stringify(listaAlarmas.value))
       }
     } catch (error) {
-      console.error("Modo Offline: Usando alarmas guardadas en memoria.", error)
+      console.error("Error cargando alarmas, usando versión local.", error)
+    }
+  }
+  const crearAlarma = async (datosAlarma, idPaciente) => {
+    try {
+      const respuesta = await fetch('http://127.0.0.1:8000/api/alarmas/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...datosAlarma,
+          id_paciente: idPaciente,
+          activo: true
+        })
+      })
+
+      if (!respuesta.ok) {
+        throw new Error('Error al guardar el recordatorio en el servidor')
+      }
+
+      const nuevaAlarmaDB = await respuesta.json()
+      
+      // Actualizamos la lista local inmediatamente para que se vea reflejada
+      listaAlarmas.value.push(nuevaAlarmaDB)
+      localStorage.setItem('lista_alarmas_offline', JSON.stringify(listaAlarmas.value))
+      
+      return true
+    } catch (error) {
+      console.error("Error creando alarma:", error)
+      throw error
     }
   }
 
@@ -63,9 +96,7 @@ export const useAlarmasStore = defineStore('alarmas', () => {
     registroTomas,
     marcarComoTomado,
     yaSeTomoHoy,
-    cargarAlarmasBackend
+    cargarAlarmasBackend,
+    crearAlarma
   }
-}, {
-  // CLAVE: Esto asegura que las alarmas y las tomas no se borren sin internet
-  persist: true 
 })

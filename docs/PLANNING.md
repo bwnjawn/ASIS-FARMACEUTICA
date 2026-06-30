@@ -124,7 +124,7 @@ playwright install chromium
 * [x] Solicitar RUT.
 * [x] Solicitar Contraseña.
 * [ ] falta confirmacion de que el rut sea real chileno.
-* [ ] quiza mas adelante poner correo real de confirmacion
+* [ ] quiza mas adelante poner correo real de confirmacion(postergar no es importante)
 
 ---
 
@@ -176,7 +176,7 @@ playwright install chromium
 * [x] Inyectar token automáticamente en cada consulta.
 * [x] Crear endpoint para guardar alarmas.
 * [x] Crear endpoint para consultar alarmas.
-* [ ] Integrar persistencia en Supabase.
+* [ ] Integrar persistencia en Supabase.(esto postergar no es importante)
 
 ---
 
@@ -196,20 +196,19 @@ playwright install chromium
 ### LoginView.vue
 
 * [x] Crear pantalla de autenticación.
-+ [ ] Falta el register.
++ [x] Falta el register.
 
 ### BuscadorMedicamentos.vue
 
-* [ ] Crear barra de búsqueda.
+* [x] Crear barra de búsqueda.
 * [ ] Implementar autocompletado.
-* [ ] Conectar con API backend.
+* [x] Conectar con API backend.
 
-### CotizadorView.vue
-
-* [ ] Mostrar farmacias en tarjetas.
-* [ ] Ordenar por precio.
+* [x] Mostrar farmacias en tarjetas.
+* [x] Ordenar por precio.
 * [ ] Ordenar por distancia.
-* [ ] Integrar geolocalización del navegador.
+* [x] Integrar geolocalización del navegador.
+* [ ] Falta mas informacion que entregue de la farmacia o la cantidad que le quedan o cosas similares.
 
 ### GestorAlarmas.vue
 
@@ -221,9 +220,11 @@ playwright install chromium
 
 ### Pinia
 
-* [ ] Configurar Pinia.
-* [ ] Instalar plugin de persistencia local.
-* [ ] Persistir datos localmente.
+* [x] Configurar Pinia.
+* [x] Instalar plugin de persistencia local.
+* [x] Persistir datos localmente.
+* [ ] NO TENGO IDEA SI LO LOCAL ESTA FUNCIONANDO, hay que comprobarlo(no se como)
+
 
 ### Alarmas Offline
 
@@ -232,7 +233,7 @@ playwright install chromium
 
 ### Notificaciones
 
-* [ ] Configurar Service Worker de Quasar.
+* [x] Configurar Service Worker de Quasar.
 * [ ] Solicitar permisos de notificación.
 * [ ] Implementar notificaciones nativas.
 * [ ] Mostrar alerta:

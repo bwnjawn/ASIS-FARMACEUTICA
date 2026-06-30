@@ -1,11 +1,14 @@
 <template>
   <q-layout view="hHh lpR fFf">
     
-    <q-header elevated class="bg-primary text-white">
+    <q-header elevated class="bg-primary text-white" v-if="rutaActual !== '/'">
       <q-toolbar>
         <q-toolbar-title class="text-center text-weight-bold q-py-sm">
+          <q-icon name="fa-solid fa-notes-medical" class="q-mr-sm" />
           ASIS Farmacéutica
         </q-toolbar-title>
+        
+        <q-btn flat round dense icon="logout" @click="cerrarSesion" />
       </q-toolbar>
     </q-header>
 
@@ -13,37 +16,35 @@
       <router-view />
     </q-page-container>
 
-    <q-footer bordered class="bg-white text-primary">
+    <q-footer bordered class="bg-white text-primary shadow-up-2" v-if="rutaActual !== '/'">
       <q-tabs
         no-caps
         active-color="primary"
-        indicator-color="transparent"
-        class="text-grey-8"
+        indicator-color="primary"
+        class="text-grey-7 bg-white"
         align="justify"
+        switch-indicator
       >
         <q-route-tab 
           to="/buscar" 
           exact
-        >
-          <q-icon name="fa-solid fa-magnifying-glass" size="md" />
-          <span class="q-mt-xs text-weight-bold">Buscar Precios</span>
-        </q-route-tab>
+          icon="fa-solid fa-magnifying-glass"
+          label="Buscar"
+        />
 
         <q-route-tab 
           to="/alarmas" 
           exact
-        >
-          <q-icon name="fa-solid fa-clock" size="md" />
-          <span class="q-mt-xs text-weight-bold">Mis Remedios</span>
-        </q-route-tab>
+          icon="fa-solid fa-clock"
+          label="Remedios"
+        />
 
         <q-route-tab 
           to="/perfil" 
           exact
-        >
-          <q-icon name="fa-solid fa-user-check" size="md" />
-          <span class="q-mt-xs text-weight-bold">Mi Perfil</span>
-        </q-route-tab>
+          icon="fa-solid fa-user-check"
+          label="Perfil"
+        />
 
       </q-tabs>
     </q-footer>
@@ -52,13 +53,37 @@
 </template>
 
 <script setup>
-// Layout base ultra simplificado. 
-// No necesitamos estado reactivo aquí por ahora.
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
+
+const route = useRoute()
+const router = useRouter()
+const authStore = useAuthStore()
+
+// Computed seguro para ocultar el menú sin depender de si Pinia ya cargó en memoria
+const rutaActual = computed(() => route.path)
+
+const cerrarSesion = () => {
+  authStore.cerrarSesion()
+  router.push('/')
+}
 </script>
 
 <style scoped>
-/* Aumentamos un poco el tamaño de la barra inferior para que sea fácil de tocar */
+/* Ajustes CSS para garantizar accesibilidad visual sin generar scroll lateral */
+:deep(.q-tab__icon) {
+  font-size: 26px !important; /* Íconos grandes para adultos mayores */
+  margin-bottom: 2px;
+}
+
+:deep(.q-tab__label) {
+  font-size: 14px !important;
+  font-weight: bold;
+}
+
 .q-footer .q-tab {
-  min-height: 80px;
+  min-height: 70px; /* Área táctil suficientemente grande */
+  padding: 0 4px; /* Reducimos el margen interno para que los 3 botones encajen siempre */
 }
 </style>

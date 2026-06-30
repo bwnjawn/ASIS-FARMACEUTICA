@@ -3,16 +3,21 @@
 const routes = [
   {
     path: '/',
-    // Usamos ../ para retroceder una carpeta desde /router y entrar a /layouts
     component: () => import('../layouts/MainLayout.vue'),
     children: [
       // Ruta por defecto: El Login
       { path: '', component: () => import('../pages/LoginView.vue') },
       
-      // Rutas futuras para las pestañas de la barra inferior
-      { path: 'buscar', component: () => import('../pages/IndexPage.vue') },
+      // Módulo de Cotización de YAPP
+      { path: 'buscar', component: () => import('../pages/BuscadorMedicamentos.vue') },
+      
+      // Módulo de Alarmas Offline
       { path: 'alarmas', component: () => import('../pages/MisRemediosView.vue') },
+      
+      // Formulario para nueva alarma
       { path: 'nueva-alarma', component: () => import('../pages/NuevaAlarmaView.vue') },
+      
+      // Ruta futura (puedes dejar IndexPage temporalmente o crear PerfilView)
       { path: 'perfil', component: () => import('../pages/IndexPage.vue') }
     ]
   },

@@ -12,7 +12,6 @@
     </div>
 
     <q-list class="q-gutter-y-lg">
-      
       <q-slide-item
         v-for="alarma in alarmasStore.listaAlarmas"
         :key="alarma.id_recordatorio"
@@ -22,42 +21,32 @@
         :class="alarmasStore.yaSeTomoHoy(alarma.id_recordatorio) ? 'bg-green-1' : 'bg-white'"
       >
         <template v-slot:right>
-          <div class="row items-center q-px-md">
-            <q-icon name="fa-solid fa-check-circle" size="2.5rem" class="q-mr-md" />
-            <span class="text-h5 text-weight-bold">¡Dosis Registrada!</span>
+          <div class="row items-center q-px-md text-h6">
+            <q-icon name="check_circle" size="md" class="q-mr-sm" /> ¡Tomado!
           </div>
         </template>
 
-        <q-item class="q-py-lg q-px-md rounded-borders">
+        <q-item class="q-pa-md">
           <q-item-section avatar>
-            <q-icon 
-              :name="alarmasStore.yaSeTomoHoy(alarma.id_recordatorio) ? 'fa-solid fa-check-circle' : 'fa-solid fa-pills'" 
-              :color="alarmasStore.yaSeTomoHoy(alarma.id_recordatorio) ? 'positive' : 'primary'" 
-              size="3.5rem" 
-            />
+            <q-icon name="schedule" size="lg" color="primary" />
+            <div class="text-weight-bold text-center q-mt-xs">{{ alarma.hora_programada.substring(0, 5) }}</div>
           </q-item-section>
 
           <q-item-section>
-            <q-item-label 
-              class="text-h5 text-weight-bold"
-              :class="alarmasStore.yaSeTomoHoy(alarma.id_recordatorio) ? 'text-positive' : 'text-dark'"
-            >
-              {{ alarma.nombre_medicamento }}
+            <q-item-label class="text-h5 text-weight-bold">{{ alarma.nombre_medicamento }}</q-item-label>
+            <q-item-label caption class="text-subtitle1 text-grey-8">
+              Tomar: <strong>{{ alarma.dosis }}</strong>
             </q-item-label>
-            <q-item-label caption class="text-h6 text-grey-8">{{ alarma.dosis }}</q-item-label>
           </q-item-section>
 
-          <q-item-section side>
-            <div class="text-h4 text-weight-bolder" :class="alarmasStore.yaSeTomoHoy(alarma.id_recordatorio) ? 'text-positive' : 'text-primary'">
-              {{ alarma.hora_programada ? alarma.hora_programada.substring(0, 5) : '--:--' }}
-            </div>
+          <q-item-section side v-if="alarmasStore.yaSeTomoHoy(alarma.id_recordatorio)">
+            <q-icon name="task_alt" color="positive" size="xl" />
           </q-item-section>
         </q-item>
       </q-slide-item>
-
     </q-list>
 
-    <q-page-sticky position="bottom-right" :offset="[20, 20]">
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn 
         fab 
         icon="fa-solid fa-plus" 
@@ -83,32 +72,39 @@ const authStore = useAuthStore()
 const alarmasStore = useAlarmasStore()
 
 onMounted(() => {
-  // Aquí mantén la ruta que arreglaste y te funcionó en el paso anterior.
-  const rutaBackend = `http://127.0.0.1:8000/api/alarmas/${authStore.idPaciente}`
-  alarmasStore.cargarAlarmasBackend(authStore.idPaciente, rutaBackend)
+  // Validación de seguridad para evitar peticiones mal formadas
+  if (authStore.idPaciente && authStore.idPaciente !== 'undefined') {
+    const rutaBackend = `http://127.0.0.1:8000/api/alarmas/${authStore.idPaciente}`
+    alarmasStore.cargarAlarmasBackend(authStore.idPaciente, rutaBackend)
+  } else {
+    console.warn("⚠️ No se detectó un ID de paciente válido. Redirigiendo al login.")
+    router.push('/')
+  }
 })
 
-const onConfirmarToma = async (alarma, eventDetails) => {
-  // Comprobamos usando el ID correcto
+const onConfirmarToma = async (alarma, details) => {
   if (!alarmasStore.yaSeTomoHoy(alarma.id_recordatorio)) {
     await alarmasStore.marcarComoTomado(alarma)
     
     $q.notify({
       type: 'positive',
-      message: '¡Excelente! Remedio marcado como tomado.',
-      position: 'top',
-      icon: 'fa-solid fa-check'
+      message: '¡Excelente! Has registrado tu toma.',
+      position: 'top'
+    })
+  } else {
+    $q.notify({
+      type: 'warning',
+      message: 'Ya registraste este medicamento hoy.',
+      position: 'top'
     })
   }
-
-  // Esto hace que la tarjeta se cierre sola tras 800 milisegundos para que 
-  // el usuario alcance a leer "¡Dosis Registrada!" y luego vea el fondo verde.
-  setTimeout(() => {
-    eventDetails.reset()
-  }, 800)
+  // Restablece visualmente el slide item después del deslizamiento
+  if (details && typeof details.reset === 'function') {
+    details.reset()
+  }
 }
 
 const abrirModalNuevaAlarma = () => {
-  router.push('/nueva-alarma')
+  router.push('/nueva-alarma') // O abre un modal si lo cambiaste a diálogo
 }
 </script>
