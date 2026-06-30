@@ -2,6 +2,8 @@ import asyncio
 import os
 import sys
 
+from app.controllers import alarmas, medicamentos
+
 # BLINDAJE PARA WINDOWS: Debe estar en la línea 1, antes de importar FastAPI o Playwright
 if sys.platform == "win32":
     # Forzamos a Windows a usar el motor que soporta subprocesos de Chromium
@@ -83,3 +85,7 @@ async def test_supabase():
         }
     except Exception as e:
         return {"status": "Error de conexión", "detalle": str(e)}
+
+
+app.include_router(medicamentos.router)
+app.include_router(alarmas.router)

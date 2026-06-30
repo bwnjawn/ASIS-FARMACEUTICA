@@ -37,7 +37,7 @@ async def renovar_token_yapp():
 
         try:
             # Entramos a la web
-            await page.goto("https://web.yapp.cl", wait_until="networkidle")
+            await page.goto("https://web.yapp.cl", wait_until="domcontentloaded")
 
             # Simulamos una pequeña espera o interacción para que la web genere el token
             await page.wait_for_timeout(3000)
