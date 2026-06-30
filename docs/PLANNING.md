@@ -234,9 +234,9 @@ playwright install chromium
 ### Notificaciones
 
 * [x] Configurar Service Worker de Quasar.
-* [ ] Solicitar permisos de notificación.
-* [ ] Implementar notificaciones nativas.
-* [ ] Mostrar alerta:
+* [x] Solicitar permisos de notificación.
+* [x] Implementar notificaciones nativas.
+* [x] Mostrar alerta:
 
 ```text
 ¡Hora de tomar tu medicamento!

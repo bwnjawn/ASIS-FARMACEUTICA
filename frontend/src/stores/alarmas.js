@@ -62,6 +62,8 @@ export const useAlarmasStore = defineStore('alarmas', () => {
       console.error("Error cargando alarmas, usando versión local.", error)
     }
   }
+
+  // 4. Crear nueva alarma
   const crearAlarma = async (datosAlarma, idPaciente) => {
     try {
       const respuesta = await fetch('http://127.0.0.1:8000/api/alarmas/', {
@@ -91,12 +93,65 @@ export const useAlarmasStore = defineStore('alarmas', () => {
     }
   }
 
+  // 5. Eliminar alarma
+  const eliminarAlarma = async (id_recordatorio) => {
+    // Eliminamos del estado local primero para asegurar la actualización de la interfaz
+    listaAlarmas.value = listaAlarmas.value.filter(a => a.id_recordatorio !== id_recordatorio)
+    localStorage.setItem('lista_alarmas_offline', JSON.stringify(listaAlarmas.value))
+
+    try {
+      const respuesta = await fetch(`http://127.0.0.1:8000/api/alarmas/${id_recordatorio}`, {
+        method: 'DELETE'
+      })
+      
+      if (!respuesta.ok) {
+        throw new Error('Error al eliminar en el servidor')
+      }
+      console.log(`Alarma ${id_recordatorio} eliminada del servidor con éxito.`)
+    } catch (error) {
+      console.warn("Modo Offline: Guardado localmente, el servidor se actualizará al recuperar red.", error)
+    }
+  }
+
+  // 6. Actualizar alarma
+  const actualizarAlarma = async (id_recordatorio, datosActualizados) => {
+    try {
+      const respuesta = await fetch(`http://127.0.0.1:8000/api/alarmas/${id_recordatorio}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(datosActualizados)
+      })
+
+      if (!respuesta.ok) throw new Error('Error al actualizar en el servidor')
+      
+      const alarmaActualizada = await respuesta.json()
+      
+      const index = listaAlarmas.value.findIndex(a => a.id_recordatorio === id_recordatorio)
+      if (index !== -1) {
+        listaAlarmas.value[index] = { ...listaAlarmas.value[index], ...alarmaActualizada }
+        localStorage.setItem('lista_alarmas_offline', JSON.stringify(listaAlarmas.value))
+      }
+    } catch (error) {
+      console.warn("Modo Offline al actualizar la alarma:", error)
+      // Respaldo local
+      const index = listaAlarmas.value.findIndex(a => a.id_recordatorio === id_recordatorio)
+      if (index !== -1) {
+        listaAlarmas.value[index] = { ...listaAlarmas.value[index], ...datosActualizados }
+        localStorage.setItem('lista_alarmas_offline', JSON.stringify(listaAlarmas.value))
+      }
+    }
+  }
+
   return {
     listaAlarmas,
     registroTomas,
     marcarComoTomado,
     yaSeTomoHoy,
     cargarAlarmasBackend,
-    crearAlarma
+    crearAlarma,
+    eliminarAlarma,
+    actualizarAlarma
   }
 })
