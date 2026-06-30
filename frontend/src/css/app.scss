@@ -1,1 +1,7 @@
 // app global css
+// Importamos Nunito (para títulos y botones, en grosor Bold)
+@import '@fontsource/nunito/800.css'; 
+
+// Importamos Atkinson Hyperlegible (para lectura normal y negrita)
+@import '@fontsource/atkinson-hyperlegible/400.css';
+@import '@fontsource/atkinson-hyperlegible/700.css';

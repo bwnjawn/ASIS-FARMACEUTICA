@@ -2,7 +2,7 @@ import asyncio
 import os
 import sys
 
-from app.controllers import alarmas, medicamentos
+from app.controllers import alarmas, authController, medicamentos
 
 # BLINDAJE PARA WINDOWS: Debe estar en la línea 1, antes de importar FastAPI o Playwright
 if sys.platform == "win32":
@@ -89,3 +89,4 @@ async def test_supabase():
 
 app.include_router(medicamentos.router)
 app.include_router(alarmas.router)
+app.include_router(authController.router)

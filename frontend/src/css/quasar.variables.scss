@@ -1,25 +1,38 @@
-// Quasar Sass (& SCSS) Variables
-// --------------------------------------------------
-// To customize the look and feel of this app, you can override
-// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+// frontend/src/css/quasar.variables.scss
 
-// Check documentation for full list of Quasar variables
+// 1. Paleta de Colores Principal
+$primary   : #FF6D00; // Naranja brillante (Alta visibilidad)
+$secondary : #FF9E40; // Naranja suave para apoyos visuales
+$accent    : #FFAB40;
 
-// Your own variables (that are declared here) and Quasar's own
-// ones will be available out of the box in your .vue/.scss/.sass files
+$dark      : #263238; // Gris Carbón para textos (Alto contraste)
+$positive  : #21BA45; // Verde para confirmaciones
+$negative  : #C10015; // Rojo para alertas o errores
+$info      : #31CCEC;
+$warning   : #F2C037;
 
-// It's highly recommended to change the default colors
-// to match your app's branding.
-// Tip: Use the "Theme Builder" on Quasar's documentation website.
+// 2. Fondo de la aplicación
+$background: #FDFBF7; // Crema muy suave
 
-$primary: #1976d2;
-$secondary: #26a69a;
-$accent: #9c27b0;
+// 3. Accesibilidad: Forzar tamaño de fuente global (RNF01)
+// 18pt equivalen aproximadamente a 24px en pantallas digitales.
+html, body {
+  font-size: 24px !important;
+  color: $dark !important;
+  background-color: $background !important;
+}
 
-$dark: #1d1d1d;
-$dark-page: #121212;
+// Ajuste para botones y pestañas para que hereden la fuente grande
+.q-btn, .q-tab__label {
+  font-size: 1rem !important; 
+  font-weight: 600;
+}
+$typography-font-family: 'Atkinson Hyperlegible', sans-serif !important;
 
-$positive: #21ba45;
-$negative: #c10015;
-$info: #31ccec;
-$warning: #f2c037;
+// Forzamos a que solo los Títulos y los Botones usen la fuente redondeada
+h1, h2, h3, h4, h5, h6, 
+.text-h1, .text-h2, .text-h3, .text-h4, .text-h5, .text-h6, 
+.q-btn, .q-tab__label {
+  font-family: 'Nunito', sans-serif !important;
+  font-weight: 800 !important;
+}

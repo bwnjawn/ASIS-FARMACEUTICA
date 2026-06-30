@@ -1,81 +1,64 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh lpR fFf">
+    
+    <q-header elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-toolbar-title class="text-center text-weight-bold q-py-sm">
+          ASIS Farmacéutica
+        </q-toolbar-title>
       </q-toolbar>
     </q-header>
-
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-footer bordered class="bg-white text-primary">
+      <q-tabs
+        no-caps
+        active-color="primary"
+        indicator-color="transparent"
+        class="text-grey-8"
+        align="justify"
+      >
+        <q-route-tab 
+          to="/buscar" 
+          exact
+        >
+          <q-icon name="fa-solid fa-magnifying-glass" size="md" />
+          <span class="q-mt-xs text-weight-bold">Buscar Precios</span>
+        </q-route-tab>
+
+        <q-route-tab 
+          to="/alarmas" 
+          exact
+        >
+          <q-icon name="fa-solid fa-clock" size="md" />
+          <span class="q-mt-xs text-weight-bold">Mis Remedios</span>
+        </q-route-tab>
+
+        <q-route-tab 
+          to="/perfil" 
+          exact
+        >
+          <q-icon name="fa-solid fa-user-check" size="md" />
+          <span class="q-mt-xs text-weight-bold">Mi Perfil</span>
+        </q-route-tab>
+
+      </q-tabs>
+    </q-footer>
+
   </q-layout>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import EssentialLink from '@/components/EssentialLink.vue'
-
-const linksList = [
-  {
-    label: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    label: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    label: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    label: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    label: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    label: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    label: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-]
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+// Layout base ultra simplificado. 
+// No necesitamos estado reactivo aquí por ahora.
 </script>
+
+<style scoped>
+/* Aumentamos un poco el tamaño de la barra inferior para que sea fácil de tocar */
+.q-footer .q-tab {
+  min-height: 80px;
+}
+</style>

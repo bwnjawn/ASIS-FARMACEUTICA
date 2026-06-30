@@ -134,48 +134,48 @@ playwright install chromium
 
 ## Estructura MVC del Backend
 
-* [ ] Crear carpeta `/models`.
-* [ ] Crear carpeta `/controllers`.
-* [ ] Crear carpeta `/services`.
+* [x] Crear carpeta `/models`.
+* [x] Crear carpeta `/controllers`.
+* [x] Crear carpeta `/services`.
 
 ### Models
 
-* [ ] Crear esquemas Pydantic.
+* [x] Crear esquemas Pydantic.
 
 ### Controllers
 
-* [ ] Implementar Auth.
-* [ ] Implementar Medicamentos.
-* [ ] Implementar Alarmas.
+* [x] Implementar Auth.
+* [x] Implementar Medicamentos.
+* [x] Implementar Alarmas.
 
 ### Services
 
-* [ ] Integración Supabase.
-* [ ] Integración YAPP.
+* [x] Integración Supabase.
+* [x] Integración YAPP.
 
 ## Bot Autómata del Token (Playwright)
 
-* [ ] Crear archivo `/services/yapp_scraper.py`.
-* [ ] Ejecutar Playwright en modo Headless.
-* [ ] Abrir `web.yapp.cl`.
-* [ ] Interceptar Network Requests.
-* [ ] Extraer Header Authorization.
-* [ ] Guardar token en memoria.
+* [x] Crear archivo `/services/yapp_scraper.py`.
+* [x] Ejecutar Playwright en modo Headless.
+* [x] Abrir `web.yapp.cl`.
+* [x] Interceptar Network Requests.
+* [x] Extraer Header Authorization.
+* [x] Guardar token en memoria.
 
 ### Automatización
 
-* [ ] Configurar APScheduler.
-* [ ] Ejecutar scraper cada 2 horas.
-* [ ] Renovar token automáticamente.
-* [ ] Validar funcionamiento sin intervención manual.
+* [x] Configurar APScheduler.
+* [x] Ejecutar scraper cada 2 horas.
+* [x] Renovar token automáticamente.
+* [x] Validar funcionamiento sin intervención manual.
 
 ## Controladores (Endpoints REST)
 
-* [ ] Migrar buscador de medicamentos.
-* [ ] Migrar cotizador.
-* [ ] Inyectar token automáticamente en cada consulta.
-* [ ] Crear endpoint para guardar alarmas.
-* [ ] Crear endpoint para consultar alarmas.
+* [x] Migrar buscador de medicamentos.
+* [x] Migrar cotizador.
+* [x] Inyectar token automáticamente en cada consulta.
+* [x] Crear endpoint para guardar alarmas.
+* [x] Crear endpoint para consultar alarmas.
 * [ ] Integrar persistencia en Supabase.
 
 ---
@@ -186,16 +186,17 @@ playwright install chromium
 
 ## Diseño Inclusivo Global
 
-* [ ] Sobrescribir `quasar.variables.scss`.
-* [ ] Aplicar paleta de alto contraste.
-* [ ] Ajustar tipografía global a 18pt / 24px.
-* [ ] Verificar cumplimiento de RNF01.
+* [x] Sobrescribir `quasar.variables.scss`.
+* [x] Aplicar paleta de alto contraste.
+* [x] Ajustar tipografía global a 18pt / 24px.
+* [x] Verificar cumplimiento de RNF01.
 
 ## Desarrollo de Componentes
 
 ### LoginView.vue
 
-* [ ] Crear pantalla de autenticación.
+* [x] Crear pantalla de autenticación.
++ [ ] Falta el register.
 
 ### BuscadorMedicamentos.vue
 
@@ -212,9 +213,9 @@ playwright install chromium
 
 ### GestorAlarmas.vue
 
-* [ ] Crear panel de alarmas.
-* [ ] Permitir agregar horarios.
-* [ ] Permitir agregar dosis.
+* [x] Crear panel de alarmas.
+* [x] Permitir agregar horarios.
+* [x] Permitir agregar dosis.
 
 ## Persistencia Offline
 
@@ -226,7 +227,7 @@ playwright install chromium
 
 ### Alarmas Offline
 
-* [ ] Guardar alarmas en almacenamiento local.
+* [x] Guardar alarmas en almacenamiento local.
 * [ ] Recuperar alarmas al reiniciar la aplicación.
 
 ### Notificaciones
