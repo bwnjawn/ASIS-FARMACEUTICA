@@ -1,3 +1,6 @@
+from app.services.corrector_ortografico import (
+    corregir_medicamento,  # <-- NUEVA IMPORTACIÓN
+)
 from app.services.diccionario_farmacias import inyectar_ubicaciones_locales
 from app.services.yapp_scraper import obtener_token_actual, renovar_token_yapp
 from curl_cffi.requests import AsyncSession
@@ -5,7 +8,6 @@ from fastapi import APIRouter, HTTPException, Query
 
 router = APIRouter(prefix="/api/medicamentos", tags=["Medicamentos (YAPP)"])
 
-# Cabeceras clonadas de tu éxito en PowerShell
 YAPP_HEADERS_PERFECTOS = {
     "accept": "*/*",
     "accept-encoding": "gzip, deflate, br, zstd",
@@ -25,6 +27,14 @@ YAPP_HEADERS_PERFECTOS = {
 async def buscar_medicamento(
     q: str = Query(..., description="Nombre del medicamento a buscar"),
 ):
+    # ==========================================
+    # 1. INTERCEPCIÓN Y AUTOCORRECCIÓN (Fuzzy Search)
+    # ==========================================
+    termino_corregido = corregir_medicamento(q)
+
+    # ==========================================
+    # 2. VALIDACIÓN DE TOKEN
+    # ==========================================
     token = obtener_token_actual()
     if not token:
         token = await renovar_token_yapp()
@@ -33,10 +43,11 @@ async def buscar_medicamento(
                 status_code=503, detail="Servicio temporalmente no disponible."
             )
 
-    # Paso 1: Sincronizar el Endpoint de Búsqueda
-    url = f"https://api-integration.yapp.cl/v2/vademecum/autocomplete?text={q}&external_vademecum=0&commune_id=10101"
-
-    # Paso 3: Sanitizar la inyección del Token (asumiendo que viene limpio del scraper)
+    # ==========================================
+    # 3. CONSTRUCCIÓN DE LA RUTA Y PETICIÓN
+    # ==========================================
+    # OJO: Aquí inyectamos `termino_corregido` en lugar de `q`
+    url = f"https://api-integration.yapp.cl/v2/vademecum/autocomplete?text={termino_corregido}&external_vademecum=0&commune_id=10101"
     headers = {**YAPP_HEADERS_PERFECTOS, "authorization": f"Bearer {token}"}
 
     async with AsyncSession(impersonate="chrome120") as client:

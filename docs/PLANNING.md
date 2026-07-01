@@ -201,14 +201,14 @@ playwright install chromium
 ### BuscadorMedicamentos.vue
 
 * [x] Crear barra de búsqueda.
-* [ ] Implementar autocompletado.
+* [x] Implementar autocompletado.
 * [x] Conectar con API backend.
 
 * [x] Mostrar farmacias en tarjetas.
 * [x] Ordenar por precio.
-* [ ] Ordenar por distancia.
+* [x] Ordenar por distancia.
 * [x] Integrar geolocalización del navegador.
-* [ ] Falta mas informacion que entregue de la farmacia o la cantidad que le quedan o cosas similares.
+* [x] Falta mas informacion que entregue de la farmacia o la cantidad que le quedan o cosas similares.
 
 ### GestorAlarmas.vue
 
