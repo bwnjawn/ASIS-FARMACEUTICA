@@ -8,3 +8,5 @@ backend/.env
 frontend/.env
 .env.production
 env.development
+frontend/.firebase/
+.firebase/
