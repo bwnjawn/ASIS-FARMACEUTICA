@@ -18,7 +18,7 @@ const routes = [
       { path: 'nueva-alarma', component: () => import('../pages/NuevaAlarmaView.vue') },
       
       // Ruta futura (puedes dejar IndexPage temporalmente o crear PerfilView)
-      { path: 'perfil', component: () => import('../pages/IndexPage.vue') }
+      { path: 'perfil', component: () => import('../pages/MiPerfil.vue') }
     ]
   },
 

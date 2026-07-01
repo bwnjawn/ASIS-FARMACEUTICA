@@ -1,68 +1,92 @@
 <template>
   <q-page class="q-pa-md bg-grey-1">
     
-    <q-btn 
-      flat 
-      icon="arrow_back" 
-      color="primary" 
-      label="Volver" 
-      class="text-h6 q-mb-md" 
-      @click="router.push('/alarmas')" 
-    />
+    <!-- ENCABEZADO SUPERIOR OPTIMIZADO -->
+    <div class="row items-center no-wrap q-mb-md q-pt-xs">
+      <div class="col-auto">
+        <q-btn 
+          flat 
+          round 
+          icon="chevron_left" 
+          color="dark" 
+          class="bg-white shadow-1" 
+          size="md"
+          @click="router.push('/alarmas')" 
+        />
+      </div>
+      <div class="col q-pl-sm row items-center no-wrap">
+        <h1 class="text-h5 text-weight-bold text-dark q-my-none q-mr-sm">
+          Nueva Alarma
+        </h1>
+        <!-- Icono de alarma naranja al costado derecho -->
+        <q-icon name="notifications_active" color="orange-9" size="xl" />
+      </div>
+    </div>
 
-    <q-card class="q-pa-lg shadow-2 bg-white" style="border-radius: 16px;">
-      <q-card-section class="text-center q-pb-md">
-        <q-icon name="fa-solid fa-bell" color="primary" size="3.5rem" class="q-mb-sm" />
-        <h1 class="text-h4 text-weight-bold q-ma-none text-dark">Nuevo Remedio</h1>
-        <p class="text-subtitle1 text-grey-7 q-mt-sm">Configure a qué hora debe tomar su medicamento.</p>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form @submit.prevent="guardarAlarma" class="q-gutter-y-lg">
+    <!-- TARJETA FORMULARIO PRINCIPAL REESTRUCTURADA -->
+    <q-card class="q-pa-md shadow-2 bg-white" style="border-radius: 20px;">
+      <q-card-section class="q-pa-none">
+        <q-form @submit.prevent="guardarAlarma" class="q-gutter-y-sm">
           
-          <q-input
-            v-model="formulario.nombre_medicamento"
-            outlined
-            label="¿Qué remedio es? (Ej: Paracetamol)"
-            type="text"
-            lazy-rules
-            bg-color="white"
-            label-color="primary"
-            class="text-h6"
-            :rules="[val => val && val.length > 0 || 'Debe ingresar un nombre']"
-          />
+          <!-- CAMPO: NOMBRE DEL MEDICAMENTO -->
+          <div>
+            <div class="text-subtitle1 text-weight-bold q-mb-xs field-label">
+              Nombre del medicamento
+            </div>
+            <q-input
+              v-model="formulario.nombre_medicamento"
+              outlined
+              placeholder="Ej: Enalapril, Metformina"
+              type="text"
+              lazy-rules
+              class="input-text-fino custom-input"
+              :rules="[val => val && val.length > 0 || 'Debe ingresar un nombre']"
+              hide-bottom-space
+            />
+          </div>
 
-          <q-input
-            v-model="formulario.dosis"
-            outlined
-            label="¿Cuánto debe tomar? (Ej: 1 pastilla)"
-            type="text"
-            lazy-rules
-            bg-color="white"
-            label-color="primary"
-            class="text-h6"
-            :rules="[val => val && val.length > 0 || 'Debe especificar la dosis']"
-          />
+          <!-- CAMPO: DOSIS -->
+          <div>
+            <div class="text-subtitle1 text-weight-bold q-mb-xs field-label">
+              Dosis
+            </div>
+            <q-input
+              v-model="formulario.dosis"
+              outlined
+              placeholder="Ej: 10 mg — 1 comprimido"
+              type="text"
+              lazy-rules
+              class="input-text-fino custom-input"
+              :rules="[val => val && val.length > 0 || 'Debe especificar la dosis']"
+              hide-bottom-space
+            />
+          </div>
 
-          <q-input
-            v-model="formulario.hora_programada"
-            outlined
-            label="Hora de la toma"
-            type="time"
-            lazy-rules
-            bg-color="white"
-            label-color="primary"
-            class="text-h6"
-            :rules="[val => !!val || 'Debe seleccionar una hora']"
-          />
+          <!-- CAMPO: HORA DE LA ALARMA -->
+          <div>
+            <div class="text-subtitle1 text-weight-bold q-mb-xs field-label">
+              Hora de la alarma
+            </div>
+            <q-input
+              v-model="formulario.hora_programada"
+              outlined
+              type="time"
+              lazy-rules
+              class="input-text-fino custom-input"
+              :rules="[val => !!val || 'Debe seleccionar una hora']"
+              hide-bottom-space
+            />
+          </div>
 
+          <!-- BOTÓN VERDE FINAL -->
           <q-btn
             type="submit"
-            color="primary"
-            label="Guardar Alarma"
-            icon="save"
-            class="full-width q-py-sm text-h6 text-weight-bold q-mt-xl"
-            style="border-radius: 12px;"
+            color="positive"
+            text-color="white"
+            icon="add"
+            label="AÑADIR ALARMA"
+            class="full-width q-py-sm text-subtitle1 text-weight-bold q-mt-md"
+            style="border-radius: 16px; min-height: 48px;"
             :loading="guardando"
           />
         </q-form>
@@ -94,12 +118,10 @@ const formulario = ref({
 const guardarAlarma = async () => {
   guardando.value = true
   try {
-    // Validamos seguridad para no enviar undefined al backend
     if (!authStore.idPaciente) {
       throw new Error('Su sesión caducó. Por favor inicie sesión nuevamente.')
     }
 
-    // Le agregamos los segundos a la hora porque tu BD PostgreSQL (tipo time) lo requiere
     const payload = {
       ...formulario.value,
       hora_programada: `${formulario.value.hora_programada}:00`
@@ -111,20 +133,49 @@ const guardarAlarma = async () => {
       type: 'positive',
       message: 'Remedio programado con éxito',
       position: 'top',
-      icon: 'fa-solid fa-check'
+      icon: 'check'
     })
 
-    // Devolvemos al usuario a su lista de remedios
     router.push('/alarmas')
   } catch (error) {
     $q.notify({
       type: 'negative',
       message: error.message || 'No se pudo guardar la alarma. Intente nuevamente.',
       position: 'top',
-      icon: 'fa-solid fa-xmark'
+      icon: 'close'
     })
   } finally {
     guardando.value = false
   }
 }
 </script>
+
+<style scoped>
+.field-label {
+  color: #0b2240;
+}
+
+/* Letra más fina y tamaño adecuado para el texto que se escribe */
+.input-text-fino :deep(input) {
+  font-size: 1.1rem !important;
+  font-weight: 400 !important;
+  color: #2d3748 !important;
+}
+
+/* Redondear y suavizar las cajas de entrada de Quasar */
+:deep(.custom-input .q-field__control) {
+  border-radius: 14px !important;
+  background-color: #f8fafc !important;
+  height: 52px !important;
+}
+
+:deep(.custom-input .q-field__outline) {
+  border-radius: 14px !important;
+}
+
+:deep(.custom-input .q-field__outline__start),
+:deep(.custom-input .q-field__outline__notch),
+:deep(.custom-input .q-field__outline__end) {
+  border-color: #e2e8f0 !important;
+}
+</style>
