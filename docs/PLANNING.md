@@ -252,39 +252,37 @@ playwright install chromium
 
 ## Backend (Render)
 
-* [ ] Crear Web Service en Render.
-* [ ] Conectar carpeta `/backend`.
-* [ ] Configurar variables de entorno.
-* [ ] Instalar dependencias.
-* [ ] Ejecutar:
+* [x] Crear Web Service en Render.
+* [x] Conectar carpeta `/backend`.
+* [x] Configurar variables de entorno.
+* [x] Instalar dependencias.
+* [x] Ejecutar:
 
 ```bash
 playwright install-deps
 ```
 
-* [ ] Validar funcionamiento del scraper.
+* [x] Validar funcionamiento del scraper.
 
 ## Frontend (Vercel o Netlify)
 
-* [ ] Conectar carpeta `/frontend`.
-* [ ] Configurar variables de entorno.
-* [ ] Apuntar a URL productiva del backend.
-* [ ] Verificar despliegue correcto.
+* [x] Conectar carpeta `/frontend`.
+* [x] Configurar variables de entorno.
+* [x] Apuntar a URL productiva del backend.
+* [x] Verificar despliegue correcto.
 
 ## Validación Final
 
-* [ ] Obtener URL pública.
-* [ ] Probar login.
-* [ ] Probar búsqueda.
-* [ ] Probar cotización.
-* [ ] Probar alarmas.
+* [x] Obtener URL pública.
+* [x] Probar login.
+* [x] Probar búsqueda.
+* [x] Probar cotización.
+* [x ] Probar alarmas.
 * [ ] Probar modo PWA.
-* [ ] Probar instalación en Android.
-* [ ] Probar instalación en iPhone.
 
 ### Resultado Esperado
 
-* [ ] Aplicación accesible mediante:
+* [x] Aplicación accesible mediante:
 
 ```text
 https://asis-farmaceutica.vercel.app

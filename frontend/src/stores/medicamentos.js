@@ -8,7 +8,7 @@ export const useMedicamentosStore = defineStore('medicamentos', () => {
   const error = ref(null)
 
   // Modificación: Uso de variable de entorno
-  const API_URL = `${import.meta.env.VITE_API_URL}/medicamentos`
+  const API_URL = `https://asis-farmaceutica-backend.onrender.com/api/medicamentos`
 
   // 1. FUNCIÓN PARA BUSCAR (Recibe solo el texto término)
   const buscarMedicamento = async (termino) => {

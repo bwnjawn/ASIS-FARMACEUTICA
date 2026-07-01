@@ -7,7 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('access_token') || null)
   
   // Modificación: Uso de variable de entorno apuntando a las rutas de auth
-  const API_URL = `${import.meta.env.VITE_API_URL}/auth`
+  const API_URL = `https://asis-farmaceutica-backend.onrender.com/api/auth`
 
   const iniciarSesion = async (rut, password) => {
     try {

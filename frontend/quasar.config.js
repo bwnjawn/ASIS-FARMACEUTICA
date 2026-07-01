@@ -138,7 +138,7 @@ export default defineConfig((/* ctx */) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'generateSW', // Estrategia para manejar archivos offline
+      workboxMode: 'GenerateSW', // Estrategia para manejar archivos offline
       injectPwaMetaTags: true,
       title: 'ASIS Farmacéutica',
       manifest: {

@@ -7,7 +7,7 @@ export const useAlarmasStore = defineStore('alarmas', () => {
   const registroTomas = ref(JSON.parse(localStorage.getItem('registro_tomas_offline')) || {})
 
   // Modificación: Uso de variable de entorno centralizada
-  const API_URL = `${import.meta.env.VITE_API_URL}/alarmas`
+  const API_URL = `https://asis-farmaceutica-backend.onrender.com/api/alarmas`
 
   const obtenerFechaHoy = () => {
     const hoy = new Date()
@@ -47,7 +47,7 @@ export const useAlarmasStore = defineStore('alarmas', () => {
   }
 
   // 3. Obtener alarmas de FastAPI
-  const cargarAlarmasBackend = async (idPaciente, rutaGET) => {
+  const cargarAlarmasBackend = async (idPaciente) => {
     // Si no hay internet, no hacemos el fetch, confiamos en lo que cargó localStorage arriba
     if (!navigator.onLine) {
       console.log("Sin conexión: Mostrando alarmas desde memoria local.")
@@ -55,7 +55,7 @@ export const useAlarmasStore = defineStore('alarmas', () => {
     }
 
     try {
-      const respuesta = await fetch(rutaGET)
+      const respuesta = await fetch(`${API_URL}/paciente/${idPaciente}`)
       if (respuesta.ok) {
         listaAlarmas.value = await respuesta.json()
         // RNF04: Actualizamos la copia de seguridad en el celular
