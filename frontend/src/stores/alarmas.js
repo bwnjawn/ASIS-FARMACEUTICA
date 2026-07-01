@@ -6,6 +6,9 @@ export const useAlarmasStore = defineStore('alarmas', () => {
   const listaAlarmas = ref(JSON.parse(localStorage.getItem('lista_alarmas_offline')) || [])
   const registroTomas = ref(JSON.parse(localStorage.getItem('registro_tomas_offline')) || {})
 
+  // Modificación: Uso de variable de entorno centralizada
+  const API_URL = `${import.meta.env.VITE_API_URL}/alarmas`
+
   const obtenerFechaHoy = () => {
     const hoy = new Date()
     return hoy.toLocaleDateString('en-CA') 
@@ -24,7 +27,7 @@ export const useAlarmasStore = defineStore('alarmas', () => {
     localStorage.setItem('registro_tomas_offline', JSON.stringify(registroTomas.value))
     
     try {
-      await fetch(`http://127.0.0.1:8000/api/alarmas/${alarma.id_recordatorio}/tomar`, {
+      await fetch(`${API_URL}/${alarma.id_recordatorio}/tomar`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
@@ -66,7 +69,7 @@ export const useAlarmasStore = defineStore('alarmas', () => {
   // 4. Crear nueva alarma
   const crearAlarma = async (datosAlarma, idPaciente) => {
     try {
-      const respuesta = await fetch('http://127.0.0.1:8000/api/alarmas/', {
+      const respuesta = await fetch(`${API_URL}/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -100,7 +103,7 @@ export const useAlarmasStore = defineStore('alarmas', () => {
     localStorage.setItem('lista_alarmas_offline', JSON.stringify(listaAlarmas.value))
 
     try {
-      const respuesta = await fetch(`http://127.0.0.1:8000/api/alarmas/${id_recordatorio}`, {
+      const respuesta = await fetch(`${API_URL}/${id_recordatorio}`, {
         method: 'DELETE'
       })
       
@@ -116,7 +119,7 @@ export const useAlarmasStore = defineStore('alarmas', () => {
   // 6. Actualizar alarma
   const actualizarAlarma = async (id_recordatorio, datosActualizados) => {
     try {
-      const respuesta = await fetch(`http://127.0.0.1:8000/api/alarmas/${id_recordatorio}`, {
+      const respuesta = await fetch(`${API_URL}/${id_recordatorio}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'

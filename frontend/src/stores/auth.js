@@ -6,11 +6,12 @@ export const useAuthStore = defineStore('auth', () => {
   const idPaciente = ref(localStorage.getItem('id_paciente') || null)
   const token = ref(localStorage.getItem('access_token') || null)
   
-  const API_URL = 'http://127.0.0.1:8000/api'
+  // Modificación: Uso de variable de entorno apuntando a las rutas de auth
+  const API_URL = `${import.meta.env.VITE_API_URL}/auth`
 
   const iniciarSesion = async (rut, password) => {
     try {
-      const respuesta = await fetch(`${API_URL}/auth/login`, {
+      const respuesta = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rut, password })
@@ -41,7 +42,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const registrarPaciente = async (rut, nombreUsuario, password) => {
     try {
-      const respuesta = await fetch(`${API_URL}/auth/registro/paciente`, {
+      const respuesta = await fetch(`${API_URL}/registro/paciente`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rut, nombre_usuario: nombreUsuario, password })

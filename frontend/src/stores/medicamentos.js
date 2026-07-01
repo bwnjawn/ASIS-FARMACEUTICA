@@ -7,7 +7,8 @@ export const useMedicamentosStore = defineStore('medicamentos', () => {
   const cargando = ref(false)
   const error = ref(null)
 
-  const API_URL = 'http://127.0.0.1:8000/api/medicamentos'
+  // Modificación: Uso de variable de entorno
+  const API_URL = `${import.meta.env.VITE_API_URL}/medicamentos`
 
   // 1. FUNCIÓN PARA BUSCAR (Recibe solo el texto término)
   const buscarMedicamento = async (termino) => {
