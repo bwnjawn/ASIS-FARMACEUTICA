@@ -1,18 +1,23 @@
-import httpx
-from app.services.yapp_scraper import obtener_token_actual
+from app.services.diccionario_farmacias import inyectar_ubicaciones_locales
+from app.services.yapp_scraper import obtener_token_actual, renovar_token_yapp
+from curl_cffi.requests import AsyncSession
 from fastapi import APIRouter, HTTPException, Query
 
 router = APIRouter(prefix="/api/medicamentos", tags=["Medicamentos (YAPP)"])
 
-# Cabeceras estándar requeridas por la seguridad de YAPP
-YAPP_HEADERS = {
+# Cabeceras clonadas de tu éxito en PowerShell
+YAPP_HEADERS_PERFECTOS = {
     "accept": "*/*",
-    "accept-language": "es-ES,es;q=0.9",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "es-ES,es;q=0.9,haw;q=0.8,mt;q=0.7",
     "client-id": "f54834cd-e9b3-11eb-a606-067f",
-    "content-type": "text/plain;charset=UTF-8",
     "origin": "https://web.yapp.cl",
+    "priority": "u=1, i",
     "referer": "https://web.yapp.cl/",
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "request-from": "medication-buy",
+    "sec-ch-ua": '"Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"',
+    "sec-ch-ua-mobile": "?1",
+    "sec-ch-ua-platform": '"iOS"',
 }
 
 
@@ -20,42 +25,37 @@ YAPP_HEADERS = {
 async def buscar_medicamento(
     q: str = Query(..., description="Nombre del medicamento a buscar"),
 ):
-    """
-    Endpoint para el buscador de texto libre (Autocompletado).
-    RF01: Búsqueda por nombre comercial o principio activo.
-    """
     token = obtener_token_actual()
     if not token:
-        raise HTTPException(
-            status_code=503,
-            detail="El token de YAPP aún no está listo. Intente en unos segundos.",
-        )
+        token = await renovar_token_yapp()
+        if not token:
+            raise HTTPException(
+                status_code=503, detail="Servicio temporalmente no disponible."
+            )
 
-    # URL correcta de la API de integración
-    url = "https://api-integration.yapp.cl/v2/vademecum/autocomplete"
-    params = {"text": q, "external_vademecum": "0"}
+    # Paso 1: Sincronizar el Endpoint de Búsqueda
+    url = f"https://api-integration.yapp.cl/v2/vademecum/autocomplete?text={q}&external_vademecum=0&commune_id=10101"
 
-    headers = {**YAPP_HEADERS, "authorization": f"Bearer {token}"}
+    # Paso 3: Sanitizar la inyección del Token (asumiendo que viene limpio del scraper)
+    headers = {**YAPP_HEADERS_PERFECTOS, "authorization": f"Bearer {token}"}
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        response = await client.get(url, params=params, headers=headers)
+    async with AsyncSession(impersonate="chrome120") as client:
+        response = await client.get(url, headers=headers)
+
+        if response.status_code in [401, 403]:
+            print("⚠️ Token vencido o Firewall alerta (403/401). Renovando...")
+            nuevo_token = await renovar_token_yapp()
+            if nuevo_token:
+                headers["authorization"] = f"Bearer {nuevo_token}"
+                response = await client.get(url, headers=headers)
 
         if response.status_code != 200:
             raise HTTPException(
                 status_code=response.status_code,
-                detail=f"Error en YAPP: {response.text}",
+                detail="Error de comunicación con el catálogo.",
             )
 
-        try:
-            data = response.json()
-            resultados = data.get("data", [])
-            # Filtramos para devolver solo los que tienen un ID de producto válido (como en tu prototipo)
-            productos_validos = [item for item in resultados if item.get("product_id")]
-            return {"data": productos_validos}
-        except Exception:
-            raise HTTPException(
-                status_code=500, detail="Error decodificando la respuesta de YAPP"
-            )
+        return response.json()
 
 
 @router.get("/cotizar")
@@ -66,19 +66,20 @@ async def cotizar_medicamento(
 ):
     """
     Endpoint para cotizar un medicamento específico.
-    RF02: Comparación de precios ordenada por geolocalización.
+    Inyecta la geolocalización local desde diccionario_farmacias.py.
     """
     token = obtener_token_actual()
     if not token:
         raise HTTPException(status_code=503, detail="Token no disponible")
 
     url = "https://api-integration.yapp.cl/v2/quotation"
-    headers = {**YAPP_HEADERS, "authorization": f"Bearer {token}"}
+    headers = {**YAPP_HEADERS_PERFECTOS, "authorization": f"Bearer {token}"}
 
-    # El payload exacto como lo armabas en tu poc_api_yapp.py
+    # Construcción exacta del payload requerido por YAPP
     payload = f'{{"products":[{{"id":"{id_producto}","result_id":""}}],"coords":{{"lat":{lat},"lng":{lng}}},"commune_id":10101}}'
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    # También protegemos este endpoint con curl_cffi para máxima seguridad
+    async with AsyncSession(impersonate="chrome120") as client:
         response = await client.post(url, data=payload, headers=headers)
 
         if response.status_code != 200:
@@ -88,19 +89,33 @@ async def cotizar_medicamento(
 
         try:
             data = response.json()
-            farmacias = data.get("data", [])
+            farmacias_brutas = data.get("data", [])
 
-            # Ordenamos las farmacias por precio y distancia como en tu yapp_service.py
-            con_distancia = [
-                p for p in farmacias if p.get("pharmacy_distance") is not None
-            ]
-            sin_distancia = [p for p in farmacias if p.get("pharmacy_distance") is None]
+            farmacias_cercanas = []
+            RADIO_MAXIMO_METROS = 10000  # 10 kilómetros a la redonda
 
-            con_distancia.sort(
-                key=lambda x: (x.get("pharmacy_distance", 999), x.get("total", 999))
+            for f_bruta in farmacias_brutas:
+                # Interceptamos la respuesta inyectando nuestro motor geográfico local
+                sucursales_mejoradas = inyectar_ubicaciones_locales(f_bruta, lat, lng)
+
+                for f_mejorada in sucursales_mejoradas:
+                    distancia = f_mejorada.get("pharmacy_distance")
+
+                    # Filtro final: Si no tiene distancia válida o supera los 10km, se descarta
+                    if distancia is not None and distancia <= RADIO_MAXIMO_METROS:
+                        farmacias_cercanas.append(f_mejorada)
+
+            # Ordenamos por precio total de menor a mayor, y de estar igual precio, por cercanía
+            farmacias_cercanas.sort(
+                key=lambda x: (
+                    x.get("total", 999999),
+                    x.get("pharmacy_distance", 99999),
+                )
             )
-            sin_distancia.sort(key=lambda x: x.get("total", 999))
 
-            return {"data": con_distancia + sin_distancia}
+            return {"data": farmacias_cercanas}
+
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            raise HTTPException(
+                status_code=500, detail=f"Error procesando datos: {str(e)}"
+            )

@@ -9,6 +9,7 @@ export const useMedicamentosStore = defineStore('medicamentos', () => {
 
   const API_URL = 'http://127.0.0.1:8000/api/medicamentos'
 
+  // 1. FUNCIÓN PARA BUSCAR (Recibe solo el texto término)
   const buscarMedicamento = async (termino) => {
     if (!termino || termino.trim().length < 2) return
 
@@ -25,7 +26,6 @@ export const useMedicamentosStore = defineStore('medicamentos', () => {
       }
 
       const datos = await respuesta.json()
-      // CORRECCIÓN AQUÍ: FastAPI devuelve {"data": [...]}. Debemos extraer el array.
       resultadosBusqueda.value = datos.data || [] 
       
       if (resultadosBusqueda.value.length === 0) {
@@ -38,6 +38,7 @@ export const useMedicamentosStore = defineStore('medicamentos', () => {
     }
   }
 
+  // 2. FUNCIÓN PARA COTIZAR (Aquí es donde van idProducto, lat, lng)
   const cotizarMedicamento = async (idProducto, lat, lng) => {
     cargando.value = true
     error.value = null
@@ -49,8 +50,11 @@ export const useMedicamentosStore = defineStore('medicamentos', () => {
       if (!respuesta.ok) throw new Error('Error al obtener los precios.')
 
       const datos = await respuesta.json()
-      // CORRECCIÓN AQUÍ: Extraer el array 'data' de la respuesta
       farmaciasCotizadas.value = datos.data || []
+
+      if (farmaciasCotizadas.value.length === 0) {
+        error.value = "No se encontraron farmacias con este remedio a menos de 15 km."
+      }
     } catch (err) {
       error.value = err.message
     } finally {
@@ -59,7 +63,6 @@ export const useMedicamentosStore = defineStore('medicamentos', () => {
   }
 
   const limpiarBusqueda = () => {
-    resultadosBusqueda.value = []
     farmaciasCotizadas.value = []
     error.value = null
   }

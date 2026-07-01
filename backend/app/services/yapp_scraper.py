@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from playwright.async_api import async_playwright
@@ -6,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 # Variable global que guardará el token en la memoria RAM del servidor
 CURRENT_YAPP_TOKEN = None
+playwright_lock = asyncio.Lock()
 
 
 async def renovar_token_yapp():
@@ -26,11 +28,12 @@ async def renovar_token_yapp():
         async def interceptar_peticion(request):
             global CURRENT_YAPP_TOKEN
             headers = request.headers
-            # Buscamos el header de autorización que manda la página al buscar
+
+            # Sanitizamos el token para asegurar que no haya duplicados
             if "authorization" in headers and "Bearer" in headers["authorization"]:
-                nuevo_token = headers["authorization"].replace("Bearer ", "")
+                nuevo_token = headers["authorization"].replace("Bearer ", "").strip()
                 CURRENT_YAPP_TOKEN = nuevo_token
-                logger.info("✅ ¡Token de YAPP capturado exitosamente!")
+                logger.info("✅ ¡Token de YAPP capturado y sanitizado exitosamente!")
 
         # Escuchamos todas las peticiones de la página
         page.on("request", interceptar_peticion)
